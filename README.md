@@ -36,3 +36,6 @@
 * [ ] **Phase 3: グローバル・ディザスタリカバリ (Planned)**
   * BCR（事業継続要件）を満たすための、クロスリージョン・レプリケーションの自動化
   * USリージョンを含めたマルチリージョン暗号鍵（Multi-Region KMS Key）の本格運用
+## Phase 4 (現在別ブランチにて検証中)
+- **データ流出防御**: VPC EndpointによるS3アクセスの完全閉域化
+- **異常検知**: Amazon GuardDuty (S3 Protection) / Macie による不正アクセス・機密データ監視
