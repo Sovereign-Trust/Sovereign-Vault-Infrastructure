@@ -30,7 +30,7 @@
   * S3 Object Lockによる10年間のデータ不変性の担保
   * KMSキーによる暗号化と削除制限ポリシーの実装
   * CloudTrailによるAPI監査ログの取得とログバケットへの隔離保護
-* [ ] **Phase 2: 実運用向けIaC最適化 (In Progress)**
+* [x] **Phase 2: 実運用向けIaC最適化 (In Progress)**
   * Terraform State (.tfstate) のS3 + DynamoDBによるセキュアなリモート管理およびステートロック機能の実装
   * ライフサイクルルールによる、一定期間経過後のGlacier Flexible Retrievalへの自動移行（ストレージコストの最適化）
 * [ ] **Phase 3: グローバル・ディザスタリカバリ (Planned)**
