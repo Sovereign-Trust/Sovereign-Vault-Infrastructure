@@ -58,13 +58,13 @@ resource "aws_s3_bucket_policy" "primary_bucket_policy" {
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
-      { 
-        Sid       = "EnforceTLSRequestsOnly", 
-        Effect    = "Deny", 
-        Principal = "*", 
-        Action    = "s3:*", 
-        Resource  = [aws_s3_bucket.primary.arn, "${aws_s3_bucket.primary.arn}/*"], 
-        Condition = { Bool = { "aws:SecureTransport": "false" } } 
+      {
+        Sid       = "EnforceTLSRequestsOnly",
+        Effect    = "Deny",
+        Principal = "*",
+        Action    = "s3:*",
+        Resource  = [aws_s3_bucket.primary.arn, "${aws_s3_bucket.primary.arn}/*"],
+        Condition = { Bool = { "aws:SecureTransport" : "false" } }
       }
     ]
   })
@@ -160,40 +160,40 @@ resource "aws_kms_key" "vault_cross_account_key" {
     Statement = [
       # ホストアカウント管理者へのキーフル管理権限（ポリシー変更・監査権限）
       {
-        Sid       = "AllowHostAccountAdminManagement",
-        Effect    = "Allow",
+        Sid    = "AllowHostAccountAdminManagement",
+        Effect = "Allow",
         Principal = {
           AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
         },
-        Action    = "kms:*",
-        Resource  = "*"
+        Action   = "kms:*",
+        Resource = "*"
       },
       # クロスアカウントエンティティに対する暗号化・復号操作の委任
       {
-        Sid       = "AllowCrossAccountCryptoOperations",
-        Effect    = "Allow",
+        Sid    = "AllowCrossAccountCryptoOperations",
+        Effect = "Allow",
         Principal = {
           AWS = var.trusted_cross_account_arns
         },
-        Action    = [
+        Action = [
           "kms:Encrypt",
           "kms:Decrypt",
           "kms:ReEncrypt*",
           "kms:GenerateDataKey*",
           "kms:DescribeKey"
         ],
-        Resource  = "*"
+        Resource = "*"
       },
       # 暗号シュレッディング（鍵削除・無効化）の明示的拒否
       {
         Sid       = "PreventCryptoShredding",
         Effect    = "Deny",
         Principal = "*",
-        Action    = [
+        Action = [
           "kms:ScheduleKeyDeletion",
           "kms:DisableKey"
         ],
-        Resource  = "*"
+        Resource = "*"
       }
     ]
   })
@@ -221,11 +221,11 @@ resource "aws_iam_role" "sovereign_vault_cross_account_role" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect    = "Allow",
+        Effect = "Allow",
         Principal = {
           AWS = var.trusted_cross_account_arns
         },
-        Action    = "sts:AssumeRole",
+        Action = "sts:AssumeRole",
         Condition = {
           StringEquals = {
             "sts:ExternalId" = var.cross_account_external_id
@@ -244,9 +244,9 @@ resource "aws_iam_policy" "sovereign_vault_kms_least_privilege_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid      = "AllowKMSOperations",
-        Effect   = "Allow",
-        Action   = [
+        Sid    = "AllowKMSOperations",
+        Effect = "Allow",
+        Action = [
           "kms:Encrypt",
           "kms:Decrypt",
           "kms:ReEncrypt*",

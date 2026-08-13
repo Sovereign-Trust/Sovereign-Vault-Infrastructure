@@ -16,7 +16,7 @@ variable "enable_key_rotation" {
 variable "trusted_cross_account_arns" {
   type        = list(string)
   description = "KMSキーアクセスを許可するクロスアカウントのARNリスト"
-  default     = [
+  default = [
     "arn:aws:iam::123456789012:root" # ※後日、実際の顧客アカウントIDに変更する
   ]
 }
