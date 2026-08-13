@@ -1,0 +1,40 @@
+name: Terraform CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-and-audit:
+    name: Validate and Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0 # ※必要に応じて自身のバージョンに合わせる
+
+      - name: Terraform Format Check
+        id: fmt
+        run: terraform fmt -check -diff
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend=false # バックエンド（S3/DynamoDB）には繋がずに初期化
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+
+      - name: tfsec Security Scanner
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: false # High以上のエラーが出たらパイプラインを強制終了させる

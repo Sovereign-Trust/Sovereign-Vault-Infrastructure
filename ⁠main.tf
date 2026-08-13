@@ -144,6 +144,7 @@ resource "aws_cloudtrail" "vault_trail" {
   include_global_service_events = true
   is_multi_region_trail         = true
   enable_log_file_validation    = true
+  kms_key_id = aws_kms_key.vault_key.arn
   depends_on                    = [aws_s3_bucket_policy.log_bucket_policy]
   event_selector {
     read_write_type           = "All"
@@ -151,6 +152,42 @@ resource "aws_cloudtrail" "vault_trail" {
     data_resource {
       type   = "AWS::S3::Object"
       values = ["${aws_s3_bucket.primary.arn}/"]
+    }
+  }
+}
+# -----------------------------------------------------------
+# S3 Public Access Block (primary bucket)
+# -----------------------------------------------------------
+resource "aws_s3_bucket_public_access_block" "primary_public_access_block" {
+  bucket = aws_s3_bucket.primary.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# -----------------------------------------------------------
+# S3 Public Access Block (log bucket)
+# -----------------------------------------------------------
+resource "aws_s3_bucket_public_access_block" "log_bucket_public_access_block" {
+  bucket = aws_s3_bucket.log_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+# -----------------------------------------------------------
+# S3 Bucket Encryption (log bucket)
+# -----------------------------------------------------------
+resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket_encryption" {
+  bucket = aws_s3_bucket.log_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.vault_key.arn
+      sse_algorithm     = "aws:kms"
     }
   }
 }
